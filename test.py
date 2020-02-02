@@ -41,29 +41,5 @@ class TestSymmetric(unittest.TestCase):
             self.assertTrue(np.all(matrix == matrix.T), msg="""Matrix not
                 symmetric {}""".format(matrix))
 
-class TestEigenfunction(unittest.TestCase):
-    """Test avoidance.get_eigenfunction_values."""
-
-    @classmethod
-    def get_pairs_symmetric_matrices(cls, samples=100):
-        """Generate sample pairs from avoidance.get_symmetric_matrix."""
-        for param in TestSymmetric.get_random_parameters(samples):
-            yield (avoidance.get_symmetric_matrix(*param) for _ in range(2))
-
-    @classmethod
-    def get_random_time_intervals(cls, samples=100):
-        for _ in range(samples):
-            yield np.linspace(-100, 100, 100)
-
-    def test_shape(self):
-        """Test matrix is of shape (A.shape[0], T.shape[0])."""
-        for A,B in self.get_pairs_symmetric_matrices():
-            T = next(self.get_random_time_intervals(1))
-            F = avoidance.get_eigenfunction_values(A, B, T)
-            self.assertEqual(F.shape, (A.shape[0], T.shape[0]))
-
-
-
-
 if __name__ == '__main__':
     unittest.main()
