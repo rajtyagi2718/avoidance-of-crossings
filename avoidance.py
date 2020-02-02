@@ -15,7 +15,7 @@ TABLEAU20 = [( 31,119,180), (174,199,232), (255,127, 14), (255,187,120),
 # RGB scaled to [0,1] for matplotlib
 TABLEAU20 = [(r/255, g/255, b/255) for x in TABLEAU20 for r,g,b in (x,)]
 
-def get_symmetric_matrix(size=5, scale=100):
+def get_symmetric_matrix(size=22, scale=100):
     """Return random symmetric matrix of real values between -scale, scale."""
     # matrix with random values between (-scale, scale)
     result = scale/2 * np.random.rand(size, size)
@@ -28,12 +28,15 @@ def get_symmetric_matrix(size=5, scale=100):
     return result
 
 def get_matrices(deg=5, size=22, scale=100):
+    """Return array of shape (deg, size, size) of symmetric matrices."""
     result = np.zeros((deg, size, size))
     for i in range(deg):
         result[i] = get_symmetric_matrix(size, scale)
     return result
 
 def get_times(deg=5, start=-5, end=5, steps=1001):
+    """Return (t^0,t^1,...,t^deg-1) as t increments from start to end."""
+    # result[i,j] = times[j]^i
     result = np.zeros((deg, steps))
     result[0,:] = 1
     result[1] = np.linspace(start, end, steps)
@@ -42,7 +45,7 @@ def get_times(deg=5, start=-5, end=5, steps=1001):
     return result
 
 def get_eigenfunction_values(matrices, times):
-    """Return matrix of eigenvalues of matrix polynomial function for t in T."""
+    """Return matrix of eigenvalues of matrix polynomial function over time."""
     #result[i,j] = ith eigenvalue of A0 + A1*t + A2*t**2 +... at time t = T[j].
     result = np.zeros((matrices[0].shape[0], times.shape[1]))
 
@@ -52,12 +55,13 @@ def get_eigenfunction_values(matrices, times):
 
     return result
 
-def plot_values(values, T):
+def plot_values(values, time):
     """Return plot of T vs values."""
     plt.figure(figsize=(16,12))
     plt.title('Eigenfunctions', y=.97, fontsize=16)
-    plt.xticks(np.linspace(np.min(values[:-1]), np.max(values[:-1]), 15), fontsize=10)
-    plt.yticks(np.linspace(T[0], T[-1], 11), fontsize=10)
+    plt.xticks(np.linspace(np.min(values[:-1]), np.max(values[:-1]), 15),
+               fontsize=10)
+    plt.yticks(np.linspace(time[0], time[-1], 11), fontsize=10)
 
     ax = plt.subplot(111)
     ax.spines['top'].set_visible(False)
@@ -72,6 +76,7 @@ def plot_values(values, T):
         plt.plot(values[i], T, color=TABLEAU20[i-1], lw=3)
 
 def get_plots(num=10):
+    """Plot values num times and save figure, matrices, times, and values."""
     for i in range(num):
         matrices = get_matrices()
         times = get_times()
